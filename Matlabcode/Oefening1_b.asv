@@ -1,6 +1,0 @@
-load('DatasetCV.mat');
-
-A = []
-for i = 1:5
-    A = [A; x'.^i; y.^i];
-end
