@@ -72,7 +72,7 @@ end
 %plot de resultaten
 
 figure
-plot(0:20, CVn_mem, "*");
+plot(0:max_n, CVn_mem, "*");
 xlabel('n')
 ylabel('CV_n')
 grid on
