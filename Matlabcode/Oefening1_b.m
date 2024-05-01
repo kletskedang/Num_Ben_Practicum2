@@ -77,9 +77,9 @@ for n = 1:max_n
     figure
     gscatter(x, y, B, 'br');
     hold on
-    contour(X, Y, Z, [0.99, 0.99], 'k');
+    contour(X, Y, Z, [0.5, 0.5], 'k');
     xlabel('X');
     ylabel('Y');
     title(['Model voor n = ', num2str(n), ' Verkeerd geclassificeerd: ', num2str(misclassified)]);
-    legend('Klasse 1', 'Klasse -1', 'Scheidingslijn');
+    legend('Groep 1', 'Groep -1', 'scheidingswand');
 end
