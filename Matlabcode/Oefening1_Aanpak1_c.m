@@ -63,7 +63,7 @@ for n = 1:max_n
         A_2(:, 2*i) = y_2.^i;
     end
     voorspel_groep2 = predict(mdl, A_2);
-    fout_class = sum(voorspel_groep2 ~= B_2);
+    fout_class = sum(voorspel_groep2 ~= B_2)
     
     CVn = fout_class / helft_lengte;
     CVn_mem(n+1) = CVn;
@@ -72,7 +72,7 @@ end
 %plot de resultaten
 
 figure
-plot(0:max_n, CVn_mem, "*");
+plot(0:max_n, CVn_mem, "r*");
 xlabel('n')
 ylabel('CV_n')
 grid on

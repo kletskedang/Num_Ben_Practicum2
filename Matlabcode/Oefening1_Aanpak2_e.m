@@ -5,8 +5,9 @@ clc
 load("DatasetCV.mat")
 
 max_n = 12;
-CVn_LOO_mem = zeros(max_n, 1);
+CVn_LOO_mem = zeros(max_n+1, 1);
 
+%berekening voor n = 0
 CVn_mem = zeros(length(x), 1);
 for a = 1:length(x)
         x_a = [x(1:a-1); x(a+1:end)];
@@ -25,9 +26,10 @@ for a = 1:length(x)
         CVn = (voorspel_a ~= B_a);
         CVn_mem(a) = CVn;
 end
-CVn_LOO = (1/length(x)) * sum(CVn_mem);
+CVn_LOO = sum(CVn_mem)/length(x);
 CVn_LOO_mem(1) = CVn_LOO;
 
+% berekening voor n = 1:12
 for n = 1:max_n
     % we halen telkens 1 waarde uit de verzameling en trainen het model op
     % de rest
@@ -66,7 +68,7 @@ for n = 1:max_n
 end
 
 figure
-plot(0:max_n, CVn_LOO_mem, "*");
+plot(0:max_n, CVn_LOO_mem, "r*");
 xlabel("n");
 ylabel("CVn_LOO")
 grid on

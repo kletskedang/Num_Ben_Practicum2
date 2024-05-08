@@ -75,7 +75,7 @@ for k = 1:6
     %plot de resultaten
     
     subplot(3, 2, k)
-    plot(0:20, CVn_mem, "*");
+    plot(0:20, CVn_mem, "r*");
     xlabel('n')
     ylabel('CV_n')
     grid on
