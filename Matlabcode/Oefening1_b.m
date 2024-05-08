@@ -80,6 +80,6 @@ for n = 1:max_n
     contour(X, Y, Z, [0.5, 0.5], 'k');
     xlabel('X');
     ylabel('Y');
-    title(['Model voor n = ', num2str(n), ' Verkeerd geclassificeerd: ', num2str(misclassified)]);
+    title(['Model voor n = ', num2str(n), '; Verkeerd geclassificeerd: ', num2str(misclassified)]);
     legend('Groep 1', 'Groep -1', 'scheidingswand');
 end
