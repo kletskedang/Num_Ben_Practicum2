@@ -8,7 +8,6 @@ n = 3;
 
 N_array = 10:20:390;
 CVn_LOO_average_mem = zeros(length(N_array), 1);
-CVn_LOO_variance_mem = zeros(length(N_array), 1);
 
 index = 1;
 number_of_samples = 50;
@@ -21,13 +20,13 @@ for N = 10:20:390
 
     nbytes = fprintf('processing sample 0 of %d', length(1:number_of_samples));
 
-    for sample = 1:number_of_samples
+    for k = 1:number_of_samples
         
         while nbytes > 0
             fprintf('\b')
             nbytes = nbytes - 1;
         end
-        nbytes = fprintf('processing sample %d of %d', sample, length(1:number_of_samples));
+        nbytes = fprintf('processing sample %d of %d', k, length(1:number_of_samples));
 
 
         random_indices = randperm(length(x));
@@ -68,14 +67,15 @@ for N = 10:20:390
         end
     
         CVn_LOO = mean(CVn_mem);
-        CVn_LOO_mem(sample) = CVn_LOO;
+        CVn_LOO_mem(k) = CVn_LOO;
     end
     %calculate the average
     CVn_LOO_average = mean(CVn_LOO_mem);
-    %Calculate the variance
-    CVn_LOO_variance = var(CVn_LOO_mem);
     CVn_LOO_average_mem(index) = CVn_LOO_average;
-    CVn_LOO_variance_mem(index) = CVn_LOO_variance;
+
+    %calculate the variance:
+    %get the difference between each value and the average
+    for item i
 
     index = index + 1;
 end
@@ -83,13 +83,6 @@ end
 figure(1)
 plot(N_array', CVn_LOO_average_mem, "*");
 xlabel("N");
-ylabel("average CVn_LOO")
-grid on
-title("kruisvalidatiefout voor LOOCV")
-
-figure(2)
-plot(N_array', CVn_LOO_variance_mem, "*");
-xlabel("N");
-ylabel("variance of CVn_LOO")
+ylabel("CVn_LOO")
 grid on
 title("kruisvalidatiefout voor LOOCV")
