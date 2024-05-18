@@ -68,7 +68,14 @@ for n = 1:max_n
 end
 
 figure
-plot(0:max_n, CVn_LOO_mem, "r*");
+semilogy(0:max_n, CVn_LOO_mem, "r*");
+hold on
+
+% Markeer de laagste waarde in de plot als blauw
+[min_value, min_index] = min(CVn_LOO_mem);
+plot(min_index-1, min_value, "b*");
+hold off
+
 xlabel("n");
 ylabel("CVn_LOO")
 grid on

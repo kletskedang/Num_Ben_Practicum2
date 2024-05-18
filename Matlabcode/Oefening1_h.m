@@ -83,9 +83,10 @@ end
 figure(1)
 plot(N_array', CVn_LOO_average_mem, "*");
 xlabel("N");
-ylabel("average CVn_LOO")
+ylabel("Gemiddelde CVn_LOO")
 grid on
-title("kruisvalidatiefout voor LOOCV")
+title("Gemiddelde kruisvalidatiefout voor LOOCV")
+legend('Gemiddelde kruisvalidatiefout')
 
 figure(2)
 plot(N_array', CVn_LOO_variance_mem, "*");

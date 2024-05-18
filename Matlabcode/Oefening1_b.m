@@ -4,6 +4,8 @@ clc
 
 load('DatasetCV.mat');
 
+disp(find(abs(x + 0.28649) < 0.0001))
+
 max_n = 5;
 
 B = cat;
@@ -29,14 +31,14 @@ for i = 1:numel(xRange)
 end
 
 %plot de resultaten
-figure
-gscatter(x, y, B, 'br');
+figure;
+gscatter(x, y, B, 'rb');
 hold on
 contour(X, Y, Z, [0.5, 0.5], 'k');
 xlabel('X');
 ylabel('Y');
 title(['Model voor n = ', num2str(0), ' Verkeerd geclassificeerd: ', num2str(misclassified)]);
-legend('Klasse 1', 'Klasse -1', 'Scheidingslijn');
+legend('Klasse -1', 'Klasse 1', 'Scheidingslijn');
 
 % voor n = 1:5
 for n = 1:max_n
@@ -74,12 +76,12 @@ for n = 1:max_n
     end
 
     % Plot de resultaten
-    figure
-    gscatter(x, y, B, 'br');
+    figure;
+    gscatter(x, y, B, 'rb');
     hold on
     contour(X, Y, Z, [0.5, 0.5], 'k');
     xlabel('X');
     ylabel('Y');
     title(['Model voor n = ', num2str(n), '; Verkeerd geclassificeerd: ', num2str(misclassified)]);
-    legend('Groep 1', 'Groep -1', 'scheidingswand');
+    legend('Groep -1', 'Groep 1', 'scheidingswand');
 end

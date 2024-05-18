@@ -3,6 +3,8 @@ clear all; close all; clc
 
 load('DatasetCV.mat');
 
+disp(find(abs(x + 0.28649) < 0.0001))
+
 max_n = 5;
 
 B = cat;
@@ -28,14 +30,14 @@ for i = 1:numel(xRange)
 end
 
 %plot de resultaten
-figure
-gscatter(x, y, B, 'br');
+figure;
+gscatter(x, y, B, 'rb');
 hold on
 contour(X, Y, Z, [0.5, 0.5], 'k');
 xlabel('X');
 ylabel('Y');
 title(['Model voor n = ', num2str(0), ' Verkeerd geclassificeerd: ', num2str(misclassified)]);
-legend('Klasse 1', 'Klasse -1', 'Scheidingslijn');
+legend('Klasse -1', 'Klasse 1', 'Scheidingslijn');
 
 % voor n = 1:5
 for n = 1:max_n
@@ -73,14 +75,14 @@ for n = 1:max_n
     end
 
     % Plot de resultaten
-    figure
-    gscatter(x, y, B, 'br');
+    figure;
+    gscatter(x, y, B, 'rb');
     hold on
     contour(X, Y, Z, [0.5, 0.5], 'k');
     xlabel('X');
     ylabel('Y');
     title(['Model voor n = ', num2str(n), '; Verkeerd geclassificeerd: ', num2str(misclassified)]);
-    legend('Groep 1', 'Groep -1', 'scheidingswand');
+    legend('Groep -1', 'Groep 1', 'scheidingswand');
 end
 
 %% c
@@ -152,14 +154,20 @@ for n = 1:max_n
     CVn_mem(n+1) = CVn;
 end
 
-%plot de resultaten
-
+% Plot de resultaten
 figure
 plot(0:max_n, CVn_mem, "r*");
+hold on
+
+% Markeer de laagste waarde in de plot als blauw
+[min_value, min_index] = min(CVn_mem);
+plot(min_index-1, min_value, "b*");
+
 xlabel('n')
 ylabel('CV_n')
 grid on
-title('kruisvalidatiefout voor een random gekozen subset')
+title('Kruisvalidatiefout voor een random gekozen subset')
+legend('CV_n waarden', 'Laagste CV_n waarde')
 
 %% d
 
@@ -236,11 +244,18 @@ for k = 1:6
     %plot de resultaten
     
     subplot(3, 2, k)
-    plot(0:20, CVn_mem, "r*");
+    semilogy(0:20, CVn_mem, "r*");
+    hold on
+
+    % Markeer de laagste waarde in de plot als blauw
+    [min_value, min_index] = min(CVn_mem);
+    plot(min_index-1, min_value, "b*");
+    hold off
+
     xlabel('n')
     ylabel('CV_n')
     grid on
-    title('kruisvalidatiefout')
+    title('Kruisvalidatiefout voor een random gekozen subset')
 end
 
 %% e
@@ -311,7 +326,14 @@ for n = 1:max_n
 end
 
 figure
-plot(0:max_n, CVn_LOO_mem, "r*");
+semilogy(0:max_n, CVn_LOO_mem, "r*");
+hold on
+
+% Markeer de laagste waarde in de plot als blauw
+[min_value, min_index] = min(CVn_LOO_mem);
+plot(min_index-1, min_value, "b*");
+hold off
+
 xlabel("n");
 ylabel("CVn_LOO")
 grid on
@@ -417,11 +439,19 @@ for n = 1:max_n
 end
 
 figure
-plot(0:max_n, CVn_k_mem, "r*");
+semilogy(0:max_n, CVn_k_mem, "r*");
+hold on
+
+% Markeer de laagste waarde in de plot als blauw
+[min_value, min_index] = min(CVn_k_mem);
+plot(min_index-1, min_value, "b*");
+hold off
+
 xlabel("n");
 ylabel("CVn_k")
 grid on
 title("kruisvalidatiefout voor K-voudig")
+legend('CVn_k waarden', 'Laagste CVn_k waarde')
 
 %% g
 
@@ -525,7 +555,7 @@ for j = 1:6
     end
     
     subplot(3, 2, j)
-    plot(0:max_n, CVn_k_mem, "*");
+    semilogy(0:max_n, CVn_k_mem, "*");
     xlabel("n");
     ylabel("CVn_k")
     grid on
@@ -546,57 +576,190 @@ load("BigDatasetCV.mat")
 n = 3;
 
 N_array = 10:20:390;
+CVn_LOO_average_mem = zeros(length(N_array), 1);
+CVn_LOO_variance_mem = zeros(length(N_array), 1);
 
-CVn_LOO_mem = zeros(length(N_array), 1);
 index = 1;
+number_of_samples = 50;
 
 for N = 10:20:390
 
-    random_indices = randperm(length(x));
-
-    xN = x(random_indices(1:N));
-    yN = y(random_indices(1:N));
-    catN = cat(random_indices(1:N));
-
-
+    disp(newline + "the value of N is: " + N)
     
-    CVn_mem = zeros(length(xN), 1);
-    for a = 1:length(xN)
-        xN_a = [xN(1:a-1); xN(a+1:end)];
-        yN_a = [yN(1:a-1); yN(a+1:end)];
-        catN_a = [catN(1:a-1); catN(a+1:end)];
+    CVn_LOO_mem = zeros(number_of_samples, 1);
 
-        B = catN_a;
+    nbytes = fprintf('processing sample 0 of %d', length(1:number_of_samples));
 
-        A = zeros(length(xN)-1, 2*n);
-        for i = 1:n
-            A(:, 2*i-1) = xN_a.^i;
-            A(:, 2*i) = yN_a.^i;
+    for sample = 1:number_of_samples
+        
+        while nbytes > 0
+            fprintf('\b')
+            nbytes = nbytes - 1;
         end
+        nbytes = fprintf('processing sample %d of %d', sample, length(1:number_of_samples));
 
-        mdl = fitclinear(A, B, "Learner", "logistic");
 
-        A_a = zeros(1, 2*n);
-        for i = 1:n
-            A_a(:, 2*i-1) = xN(a).^i;
-            A_a(:, 2*i) = yN(a).^i;
+        random_indices = randperm(length(x));
+    
+        xN = x(random_indices(1:N));
+        yN = y(random_indices(1:N));
+        catN = cat(random_indices(1:N));
+    
+    
+        
+        CVn_mem = zeros(length(xN), 1);
+        for a = 1:length(xN)
+            xN_a = [xN(1:a-1); xN(a+1:end)];
+            yN_a = [yN(1:a-1); yN(a+1:end)];
+            catN_a = [catN(1:a-1); catN(a+1:end)];
+    
+            B = catN_a;
+    
+            A = zeros(length(xN)-1, 2*n);
+            for i = 1:n
+                A(:, 2*i-1) = xN_a.^i;
+                A(:, 2*i) = yN_a.^i;
+            end
+    
+            mdl = fitclinear(A, B, "Learner", "logistic");
+    
+            A_a = zeros(1, 2*n);
+            for i = 1:n
+                A_a(:, 2*i-1) = xN(a).^i;
+                A_a(:, 2*i) = yN(a).^i;
+            end
+    
+            B_a = catN(a);
+    
+            voorspel_a = predict(mdl, A_a);
+            CVn = (voorspel_a ~= B_a);
+            CVn_mem(a) = CVn;
         end
-
-        B_a = catN(a);
-
-        voorspel_a = predict(mdl, A_a);
-        CVn = (voorspel_a ~= B_a);
-        CVn_mem(a) = CVn;
+    
+        CVn_LOO = mean(CVn_mem);
+        CVn_LOO_mem(sample) = CVn_LOO;
     end
+    %calculate the average
+    CVn_LOO_average = mean(CVn_LOO_mem);
+    %Calculate the variance
+    CVn_LOO_variance = var(CVn_LOO_mem);
+    CVn_LOO_average_mem(index) = CVn_LOO_average;
+    CVn_LOO_variance_mem(index) = CVn_LOO_variance;
 
-    CVn_LOO = sum(CVn_mem) / length(xN);
-    CVn_LOO_mem(index) = CVn_LOO;
     index = index + 1;
 end
 
 figure(1)
-plot(N_array', CVn_LOO_mem, "*");
+plot(N_array', CVn_LOO_average_mem, "*");
 xlabel("N");
-ylabel("CVn_LOO")
+ylabel("Gemiddelde CVn_LOO")
 grid on
-title("kruisvalidatiefout voor LOOCV")
+title("Gemiddelde kruisvalidatiefout voor LOOCV")
+legend('Gemiddelde kruisvalidatiefout')
+
+figure(2)
+plot(N_array', CVn_LOO_variance_mem, "*");
+xlabel("N");
+ylabel("variantie van CVn_LOO")
+grid on
+title("variantie op kruisvalidatiefout voor LOOCV")
+
+%% i
+
+load('BigDatasetCV.mat')
+
+K_array = 2:15;
+n = 3;
+number_of_samples = 200;
+N = 400;
+
+CVn_k_average_mem = zeros(length(K_array), 1);
+CVn_k_variance_mem = zeros(length(K_array), 1);
+% bereken het gemiddelde voor K = 1
+
+% bereken de gemiddeldes voor K = 2:15
+for K = K_array
+    disp(newline + "the value of K is: " + K)
+
+    CVn_k_mem = zeros(number_of_samples, 1);
+
+    nbytes = fprintf('processing sample 0 of %d', length(1:number_of_samples));
+    for sample = 1:number_of_samples
+
+        while nbytes > 0
+            fprintf('\b')
+            nbytes = nbytes - 1;
+        end
+        nbytes = fprintf('processing sample %d of %d', sample, length(1:number_of_samples));
+
+        % bepaal een random volgorde van indices
+        random_indices = randperm(length(x), N);
+
+        CVn_mem = zeros(K, 1);
+        for k = 1:K
+            % Bepaal de indeces voor de K-de groep
+            start_kInt = round(1+(N/K)*(k-1));
+            end_kInt = round((N/K)*k);
+    
+            % Bepaal welke indeces in de trainingset zitten en welke in de test
+            indices_k = [random_indices(1:start_kInt-1), random_indices(end_kInt+1:end)];
+            indices_test = random_indices(start_kInt:end_kInt); 
+
+            x_k = x(indices_k);
+            y_k = y(indices_k);
+            cat_k = cat(indices_k);
+                
+            B_k = cat_k;
+
+            % Bouw matrix A
+            A_k = zeros(length(x_k), 2*n);
+            for i = 1:n
+                A_k(:, 2*i-1) = x_k.^i;
+                A_k(:, 2*i) = y_k.^i;  
+            end
+        
+            mdl = fitclinear(A_k, B_k, "Learner", "logistic");
+
+            % test op de testset
+            x_test = x(indices_test);
+            y_test = y(indices_test);
+            cat_test = cat(indices_test);
+            B_test = cat_test;
+        
+            A_test = zeros(length(x_test), 2*n);
+            for i = 1:n
+                A_test(:, 2*i-1) = x_test.^i;
+                A_test(:, 2*i) = y_test.^i;
+            end
+        
+            voorspel_test = predict(mdl, A_test);
+            fout_class = sum(voorspel_test ~= B_test);
+
+            CVn = fout_class / (length(x)/K);
+            CVn_mem(k) = CVn;
+        end
+        CVn_k = sum(CVn_mem)/K;
+        CVn_k_mem(sample) = CVn_k;
+    end
+    CVn_k_average = mean(CVn_k_mem);
+    CVn_k_average_mem(K) = CVn_k_average;
+    % for 1_j
+    CVn_k_variance = var(CVn_k_mem);
+    CVn_k_variance_mem(K) = CVn_k_variance;
+end
+
+figure
+plot(2:15, CVn_k_average_mem(2:15), "r*");
+xlabel("K");
+ylabel("gemiddelde CVn_k")
+grid on
+title("gemiddelde kruisvalidatiefout KFCV")
+
+%% k
+
+figure
+plot(2:15, CVn_k_variance_mem(2:15), "r*");
+xlabel("K");
+ylabel("variantie van CVn_k")
+grid on
+title("variantie op kruisvalidatiefout voor KFCV")

@@ -69,11 +69,17 @@ for n = 1:max_n
     CVn_mem(n+1) = CVn;
 end
 
-%plot de resultaten
-
+% Plot de resultaten
 figure
 plot(0:max_n, CVn_mem, "r*");
+hold on
+
+% Markeer de laagste waarde in de plot als blauw
+[min_value, min_index] = min(CVn_mem);
+plot(min_index-1, min_value, "b*");
+
 xlabel('n')
 ylabel('CV_n')
 grid on
-title('kruisvalidatiefout voor een random gekozen subset')
+title('Kruisvalidatiefout voor een random gekozen subset')
+legend('CV_n waarden', 'Laagste CV_n waarde')

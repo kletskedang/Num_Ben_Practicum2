@@ -75,9 +75,16 @@ for k = 1:6
     %plot de resultaten
     
     subplot(3, 2, k)
-    plot(0:20, CVn_mem, "r*");
+    semilogy(0:20, CVn_mem, "r*");
+    hold on
+
+    % Markeer de laagste waarde in de plot als blauw
+    [min_value, min_index] = min(CVn_mem);
+    plot(min_index-1, min_value, "b*");
+    hold off
+
     xlabel('n')
     ylabel('CV_n')
     grid on
-    title('kruisvalidatiefout')
+    title('Kruisvalidatiefout voor een random gekozen subset')
 end

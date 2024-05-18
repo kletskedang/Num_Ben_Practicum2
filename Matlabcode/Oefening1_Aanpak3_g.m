@@ -102,7 +102,7 @@ for j = 1:6
     end
     
     subplot(3, 2, j)
-    plot(0:max_n, CVn_k_mem, "*");
+    semilogy(0:max_n, CVn_k_mem, "*");
     xlabel("n");
     ylabel("CVn_k")
     grid on

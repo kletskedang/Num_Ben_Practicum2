@@ -100,8 +100,16 @@ for n = 1:max_n
 end
 
 figure
-plot(0:max_n, CVn_k_mem, "r*");
+semilogy(0:max_n, CVn_k_mem, "r*");
+hold on
+
+% Markeer de laagste waarde in de plot als blauw
+[min_value, min_index] = min(CVn_k_mem);
+plot(min_index-1, min_value, "b*");
+hold off
+
 xlabel("n");
 ylabel("CVn_k")
 grid on
 title("kruisvalidatiefout voor K-voudig")
+legend('CVn_k waarden', 'Laagste CVn_k waarde')
